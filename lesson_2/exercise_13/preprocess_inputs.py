@@ -8,9 +8,9 @@ import numpy as np
 #https://docs.openvinotoolkit.org/latest/_models_intel_human_pose_estimation_0001_description_human_pose_estimation_0001.html
 #before the width and height is a space which represent both the batch and the channel so 
 
-def preprocessingimage(input_image, height, width):
+def preprocessing(input_image, height, width):
     image = cv2.resize(input_image, (width, height))
-    image = mage.transpose((2,0,1)) #2,0,1 is shuffle dimension to convert h*w*c to c*h*w. it brings the 2nd index to 0th index then 0th to 1st one and 1st to 2nd one.
+    image = image.transpose((2,0,1)) #2,0,1 is shuffle dimension to convert h*w*c to c*h*w. it brings the 2nd index to 0th index then 0th to 1st one and 1st to 2nd one.
     image = image.reshape(1, 3, height, width)
     return image
 
