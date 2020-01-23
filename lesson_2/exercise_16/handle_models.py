@@ -8,17 +8,10 @@ def handle_pose(output, input_shape):
     Returns ONLY the keypoint heatmaps, and not the Part Affinity Fields.
     '''
     # TODO 1: Extract only the second blob output (keypoint heatmaps)
-    #print(output.keys())
-    #o/p dict_keys(['Mconv7_stage2_L1', 'Mconv7_stage2_L2'])
-    #print(output['Mconv7_stage2_L2'].shape)
-    #o/p (1, 19, 32, 57)
     heatmaps = output['Mconv7_stage2_L2']
     # TODO 2: Resize the heatmap back to the size of the input
-    #print(heatmaps.shape[1]) ===> 19
-    #print(input_shape[0]) ===> 750
-    #print(input_shape[1]) ===> 1000
-    #print(len(heatmaps[0])) ===> 19, heatmaps[1] ===> index 1 is out of bounds for axis 0 with size 1
     out_heatmap = np.zeros([heatmaps.shape[1], input_shape[0], input_shape[1]])
+    # Iterate through and re-size each heatmap
     for h in range(len(heatmaps[0])):
         out_heatmap[h] = cv2.resize(heatmaps[0][h], input_shape[0:2][::-1])
 
@@ -32,19 +25,9 @@ def handle_text(output, input_shape):
         and not the linkage between pixels and their neighbors.
     '''
     # TODO 1: Extract only the first blob output (text/no text classification)
-    #print(output.keys()) ===> dict_keys(['model/segm_logits/add', 'model/link_logits_/add'])
-    text_class = output['model/segm_logits/add']
-    #print(output['model/segm_logits/add'].shape) ===>(1, 2, 192, 320)
     # TODO 2: Resize this output back to the size of the input
-    out_text = np.zeros([text_class.shape[1], input_shape[0], input_shape[1]])
-    #print(text_class.shape[1]) ===> 2
-    #print(len(text_class[0])) ===> 2
-    #print(text_class[0][0].shape) ===> (192, 320)
-    #print(input_shape[0:2][::-1]) ===> (1000, 667)
-    #print(input_shape[0:2])  ===> (667, 1000)
-    for h in range(len(text_class[0])):
-        out_text[h] = cv2.resize(text_class[0][h], input_shape[0:2][::-1])
-    return out_text
+
+    return None
 
 
 def handle_car(output, input_shape):
@@ -54,16 +37,14 @@ def handle_car(output, input_shape):
     The first is for color, and the second for type.
     '''
     # TODO 1: Get the argmax of the "color" output
+    # Use flatten to Get rid of unnecessary dimensions
     color = output['color'].flatten()
     car_type = output['type'].flatten()
-    print(color.shape)
-    print(color)
-    print(car_type.shape)
-    print(car_type)
     color_class = np.argmax(color)
+
     # TODO 2: Get the argmax of the "type" output
     type_class = np.argmax(car_type)
-    return color_class,type_class
+    return color_class, type_class
 
 
 def handle_output(model_type):
