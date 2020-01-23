@@ -24,10 +24,14 @@ def handle_text(output, input_shape):
     Returns ONLY the text/no text classification of each pixel,
         and not the linkage between pixels and their neighbors.
     '''
-    # TODO 1: Extract only the first blob output (text/no text classification)
+  # TODO 1: Extract only the first blob output (text/no text classification)
+    text_classes = output['model/segm_logits/add']
     # TODO 2: Resize this output back to the size of the input
+    out_text = np.empty([text_classes.shape[1], input_shape[0], input_shape[1]])
+    for t in range(len(text_classes[0])):
+        out_text[t] = cv2.resize(text_classes[0][t], input_shape[0:2][::-1])
 
-    return None
+    return out_text
 
 
 def handle_car(output, input_shape):
